@@ -1,0 +1,21 @@
+:root {
+  --avod-accent: #c7f000;
+  --avod-ink: #171a17;
+  --avod-ink-muted: #4b514a;
+  --avod-canvas: #f7f8f5;
+  --avod-surface: #ffffff;
+  --avod-border: #dde1d9;
+  --avod-error: #b42318;
+  --avod-warning: #9a6700;
+  --avod-success: #137333;
+  --avod-font-display: "Fraunces", "Source Serif 4", Georgia, serif;
+  --avod-font-body: "Sora", "Avenir Next", "Segoe UI", sans-serif;
+  --tenant-primary: #1b3a2e;
+  --tenant-secondary: #c9a227;
+  --tenant-accent: #c7f000;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --shadow-soft: 0 10px 40px rgba(23, 26, 23, 0.08);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
