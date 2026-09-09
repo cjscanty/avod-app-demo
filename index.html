@@ -207,12 +207,12 @@ function lessonsList(c,learn){ let out=[]; (c.modules||[]).forEach(m=>m.ls.forEa
 function syncUrl(){ const u=new URL(location.href); u.searchParams.set("village",village); if(view==="journey"&&JL)u.searchParams.set("journey",JL); else u.searchParams.delete("journey"); history.replaceState(null,"",u); }
 function note(m){ const n=document.getElementById("note"); n.textContent=m; n.style.display="block"; setTimeout(()=>n.style.display="none",3200); }
 function renderNav(){
-  const items = NAVS.map(n=>'<button class="'+(view===n[0]?'on':'')+'" onclick="go(\''+n[0]+'\')"><span>'+n[2]+'</span> <em>'+n[1]+'</em></button>').join("");
+  const items = NAVS.map(n=>'<button class="'+(view===n[0]?'on':'')+'" data-view="'+n[0]+'"><span>'+n[2]+'</span> <em>'+n[1]+'</em></button>').join("");
   document.getElementById("nav").innerHTML=items;
   document.getElementById("tabs").innerHTML=items;
   document.getElementById("tenantSel").innerHTML=Object.keys(DATA).map(k=>'<option value="'+k+'" '+(k===village?"selected":"")+'>'+DATA[k].emoji+' '+DATA[k].name+'</option>').join("");
 }
-function go(v){ view=v; if(v!=="studio")selCourse=null; syncUrl(); renderNav(); render(); }
+function go(v){ view=v; if(v!=="studio")selCourse=null; syncUrl(); renderNav(); render(); window.scrollTo(0,0); }
 function switchVillage(v){ village=v; JL=DATA[v].learners.find(l=>l.status==="active").id; selCourse=null; syncUrl(); renderNav(); render(); }
 function setJL(id){ JL=id; syncUrl(); render(); }
 function pick(c){ selCourse=selCourse===c?null:c; render(); }
@@ -290,6 +290,9 @@ function openSum(id){ const c=cls(); const l=c.learners.find(x=>x.id===id);
  document.getElementById("modal").innerHTML=h; }
 function closeSum(){ document.getElementById("modal").innerHTML=""; }
 document.getElementById("tenantSel").addEventListener("change",e=>switchVillage(e.target.value));
+function wireTabs(id){ const el=document.getElementById(id); if(!el)return; el.addEventListener("click",e=>{ const b=e.target.closest("button[data-view]"); if(b){ e.preventDefault(); go(b.getAttribute("data-view")); } }); }
+wireTabs("nav"); wireTabs("tabs");
+
 renderNav(); render();
 </script>
 </body>
