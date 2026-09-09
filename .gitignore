@@ -9,3 +9,5 @@ dist
 .vercel
 coverage
 *.tsbuildinfo
+test-results
+artifacts
