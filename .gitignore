@@ -11,3 +11,4 @@ coverage
 *.tsbuildinfo
 test-results
 artifacts
+supabase/.temp
