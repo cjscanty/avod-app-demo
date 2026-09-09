@@ -388,6 +388,7 @@ function startCeremony(){ const c=document.getElementById("cer");
  c.innerHTML='<div class="cer"><div class="cmark">AVOD</div><div class="cline">Every child belongs to the village.</div><div class="csub">Entering '+cls().name+' …</div></div>';
  setTimeout(()=>{ c.innerHTML=""; go("dashboard"); }, 2100); }
 
+function renderAll(){ renderNav(); if(S.view==="landing") renderLanding(); else renderApp(); }
 /* ============ APP VIEWS ============ */
 function renderApp(){ document.body.classList.remove("landing");
  const c=cls(); const app=document.getElementById("app");
