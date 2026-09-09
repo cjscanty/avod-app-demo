@@ -318,6 +318,7 @@ const qs = new URLSearchParams(location.search);
 if (qs.get("village") && DATA.classrooms[qs.get("village")]) state.village = qs.get("village");
 if (qs.get("journey")) { state.JL = qs.get("journey"); state.view = "journey"; }
 if (qs.get("play")) { state.playerCourse = qs.get("play"); if (!qs.get("journey")) state.view = "player"; }
+if (qs.get("enter")) { state.view = "dashboard"; }
 if (!state.view) state.view = "landing";
 if (!state.role) state.role = "super";
 const S = state; 
@@ -379,7 +380,7 @@ function renderLanding(){ document.body.classList.add("landing");
      <div class="lcell"><b>👨‍👩‍👧 Parent windows</b><p>Deep links land any parent on their child's journey page. Weekly summaries print or email, branded to the school.</p></div>
      <div class="lcell"><b>♜ Super admin</b><p>The network owner sees every classroom, every village, every meter — and can pause, provision, or retire a tenant in one look.</p></div>
    </div>
-   <div class="btns" style="text-align:center;margin-top:34px"><button class="lbtn g" onclick="startCeremony()">Begin the tour</button></div>
+   <div class="btns" style="text-align:center;margin-top:34px"><a class="lbtn g" href="?village=cls_kp&enter=1" onclick="startCeremony();return false" style="text-decoration:none;display:inline-block">Begin the tour</a></div>
  </div>
  <div class="lfoot">African Village of Discovery · demo build · sample data only</div>`;
  window.scrollTo(0,0);
@@ -644,7 +645,7 @@ renderLanding = function(){ document.body.classList.add("landing");
    <div class="lHero-sub">African Village of Discovery</div>
    <p class="lHero-tag">The village that teaches your child. Each school runs on its own brand and domain — Kingdom Prep or Ubuntu Academy — while AVOD quietly powers the courses, mastery, community, and reporting beneath.</p>
    <div class="lbtns">
-     <button class="lbtn g" onclick="startCeremony()">Enter Kingdom Preparatory »</button>
+     <a class="lbtn g" href="?village=cls_kp&enter=1" onclick="startCeremony();return false" style="text-decoration:none;display:inline-block">Enter Kingdom Preparatory »</a>
      <button class="lbtn" onclick="document.getElementById('lmore').scrollIntoView({behavior:'smooth'})">See how it works</button>
    </div>
  </div>
