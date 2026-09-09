@@ -1,32 +1,63 @@
-# AVOD â African Village of Discovery
+# AVOD
 
-The full single-file build of the multi-tenant homeschool platform â landing page, branded villages, course player with quizzes, progress tracking, community, events, and super admin console. Runs statically; sample data; state persists in-browser via localStorage.
+Multi-tenant homeschool learning platform — parent portal + mobile-first learner experience, with PostgreSQL/Supabase as the system of record.
 
-## Live
+This repository redesigns the former single-file localStorage demo into the SRS baseline stack (Phase 0 foundation + Phase 1 vertical slice).
 
-GitHub Pages serves `index.html` at:
+## Quick start
 
-  https://cjscanty.github.io/avod-app-demo/
+```bash
+npm install
+npm run dev
+```
 
-## The app
+Open [http://localhost:3000](http://localhost:3000).
 
-- **Landing page** â hero, how-it-works grid, and a working interest form that feeds the Super Admin provisioning queue
-- **Two branded villages** â Kingdom Preparatory (gold crown, kingdomprep.org) and Ubuntu Leadership Academy (terracotta globe) with full tenant isolation
-- **Village Square** â live stat dashboard and latest chronicle entries
-- **My Journey** â completion rings, up-next lessons, mastery by village label, Showcase Gallery, printable weekly summary card
-- **Course Player** â module/lesson rail, video and reading stages, project step checklists, graded quizzes that record to the journey
-- **Course Studio** â catalog, publish/unpublish, create drafts, add modules
-- **Learners, Gradebook (inline grading), Village Voice (post + moderation), Events, Branding editor (live), Chronicle audit log**
-- **Super Admin** â network-wide meters, village directory, moderation queue, provisioning feed
+- **Learner app (mobile-first):** `/learn` — Home, Courses, To-Do, Community, Profile
+- **Parent portal:** `/parent` — Dashboard, Courses, Curriculum Builder, Brand Studio, etc.
 
-## Deep links
+Without Supabase env vars the UI runs on Kingdom Preparatory **demo seed** data.
 
-- `?village=cls_ula` â open Ubuntu Leadership Academy directly
-- `?village=cls_kp&journey=tamika` â Tamika's parent journey page
-- `?play=africiv` â land in the African Civilizations course player
+## Supabase
 
-## Data
+1. Create a Supabase project.
+2. Apply migrations in order:
 
-All mutations (published courses, grades, posts, branding, extra lesson completions) persist in localStorage. Use **Reset demo data** (sidebar footer) to restore the seed state.
+```bash
+supabase db push
+# or run SQL files in supabase/migrations via the SQL editor
+```
 
-_Build: full application v2, static single-file._
+3. Copy `apps/web/.env.example` → `apps/web/.env.local` and set:
+
+```
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+```
+
+4. Create auth users matching seed UUIDs (or adapt the seed), then:
+
+```sql
+select public.seed_kingdom_preparatory();
+```
+
+Schema covers organizations, classrooms, themes, courses, modules, lessons, AI jobs/artifacts, resources, assignments, quizzes, gradebook, progress, calendar, community, moderation, notifications, files, and audit logs — with RLS policies for tenant isolation.
+
+## Brand
+
+AVOD accent `#C7F000` with ink `#171A17` and canvas `#F7F8F5` (SRS §13.3). Classroom themes (e.g. Kingdom Preparatory) override tenant visual tokens without removing AVOD attribution or safety controls.
+
+## Docs
+
+- `docs/architecture/phase-0.md`
+- `docs/decisions/0001-supabase.md`
+- `docs/api/vertical-slice.md`
+- `docs/legacy-demo.html` — previous static demo
+
+## Scripts
+
+| Command | Description |
+|---|---|
+| `npm run dev` | Next.js web app |
+| `npm run build` | Production build |
+| `npm run typecheck` | TypeScript check |
