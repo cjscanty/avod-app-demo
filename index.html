@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AVOD — African Village of Discovery (Demo)</title>
+<style>
+  :root { --gold:#C9A227; --terra:#C0532F; --cream:#F4EAD3; --mut:#9d8a63; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:#161009; color:var(--cream); font-family:'Avenir Next','Segoe UI','Helvetica Neue',sans-serif; }
+  .wrap { display:flex; min-height:100vh; }
+  .side { width:218px; flex-shrink:0; border-right:1px solid rgba(201,162,39,.22); padding:22px 14px; background:linear-gradient(180deg,#1b130a,#161009); position:sticky; top:0; height:100vh; overflow:auto; }
+  .main { flex:1; padding:26px 30px 60px; max-width:1180px; }
+  .vmark { text-align:center; margin-bottom:20px; padding-bottom:18px; border-bottom:1px solid rgba(201,162,39,.25); }
+  .vmark b { font-family:Palatino,'Palatino Linotype',Georgia,serif; font-size:21px; letter-spacing:.28em; color:var(--gold); }
+  .vmark div { font-size:10.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--mut); margin-top:4px; }
+  .tenant { width:100%; background:rgba(201,162,39,.08); border:1px solid rgba(201,162,39,.35); color:var(--cream); border-radius:6px; padding:8px 10px; font-size:12.5px; margin-bottom:18px; cursor:pointer; }
+  nav button { display:flex; align-items:center; gap:10px; width:100%; background:none; border:none; color:#CBB68D; text-align:left; padding:9px 11px; border-radius:6px; font-size:13.5px; cursor:pointer; font-family:inherit; }
+  nav button:hover { background:rgba(201,162,39,.12); color:var(--cream); }
+  nav button.on { background:linear-gradient(90deg,rgba(201,162,39,.26),rgba(201,162,39,.08)); color:#FFD870; border-left:3px solid var(--gold); padding-left:8px; }
+  .hero { display:flex; justify-content:space-between; align-items:flex-end; gap:14px; flex-wrap:wrap; padding:6px 0 20px; border-bottom:3px double rgba(201,162,39,.45); margin-bottom:22px; }
+  .kick { font-size:11px; letter-spacing:.3em; text-transform:uppercase; color:var(--terra); margin-bottom:6px; }
+  h1 { font-family:Palatino,Georgia,serif; font-size:34px; margin:0; font-weight:500; }
+  .hsub { color:var(--mut); font-size:13.5px; margin-top:6px; font-style:italic; }
+  .edge { color:var(--gold); letter-spacing:.5em; font-size:13px; opacity:.75; }
+  h2 { font-family:Palatino,Georgia,serif; font-size:26px; margin:0 0 4px; font-weight:500; }
+  .vsub { color:var(--mut); font-size:13px; }
+  .vhead { margin-bottom:20px; padding-bottom:14px; border-bottom:3px double rgba(201,162,39,.4); }
+  .stats { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:26px; }
+  .stat { border:1px solid rgba(201,162,39,.3); border-radius:8px; padding:14px; background:linear-gradient(160deg,rgba(192,83,47,.14),rgba(201,162,39,.05)); }
+  .stat .n { font-family:Palatino,Georgia,serif; font-size:30px; color:#FFD870; margin:4px 0 2px; }
+  .stat .l { font-size:12px; } .stat .s { font-size:11px; color:var(--mut); margin-top:2px; }
+  .cols { display:grid; grid-template-columns:1.15fr 1fr; gap:18px; }
+  .panel { border:1px solid rgba(201,162,39,.28); border-radius:10px; background:rgba(255,231,180,.03); padding:18px; margin-bottom:18px; }
+  .ptitle { font-family:Palatino,Georgia,serif; font-size:16px; color:#FFD870; padding-bottom:12px; border-bottom:1px solid rgba(201,162,39,.2); margin-bottom:14px; }
+  .prow { margin-bottom:16px; }
+  .prow .pt { font-size:14px; } .prow .ps { font-size:11.5px; color:var(--mut); margin:2px 0 6px; }
+  .prow .pct { font-family:Palatino,Georgia,serif; font-size:20px; color:#FFD870; float:right; }
+  .bar { height:7px; border-radius:4px; background:rgba(201,162,39,.14); overflow:hidden; }
+  .bar i { display:block; height:100%; border-radius:4px; background:linear-gradient(90deg,var(--terra),var(--gold)); }
+  .au { padding:9px 0; border-bottom:1px dashed rgba(201,162,39,.18); }
+  .au .a { font-size:13px; } .au .m { font-size:11.5px; color:var(--mut); margin-top:2px; } .au .w { font-size:10.5px; color:#6f6248; margin-top:1px; }
+  .badge { display:inline-block; font-size:10px; letter-spacing:.12em; text-transform:uppercase; padding:2px 8px; border-radius:20px; border:1px solid; }
+  .b-pub { color:#8fce9e; border-color:rgba(143,206,158,.5); } .b-draft { color:#e0b25f; border-color:rgba(224,178,95,.5); } .b-flag { color:#e08a7a; border-color:rgba(224,138,122,.5); }
+  .course { border:1px solid rgba(201,162,39,.22); border-radius:8px; padding:13px 14px; margin-bottom:12px; cursor:pointer; transition:border-color .15s; }
+  .course:hover { border-color:rgba(201,162,39,.55); } .course.on { border-color:var(--gold); background:rgba(201,162,39,.09); }
+  .course .ct { font-family:Palatino,Georgia,serif; font-size:16.5px; } .course .cm { font-size:11.5px; color:var(--mut); margin:4px 0; } .course .cd { font-size:12.5px; color:#CBB68D; line-height:1.45; }
+  .mod { border:1px solid rgba(201,162,39,.22); border-radius:8px; padding:12px 14px; margin-bottom:12px; }
+  .mod .mt { font-size:14.5px; } .mod .mo { font-size:11.5px; color:var(--mut); font-style:italic; margin-top:2px; }
+  .les { display:flex; gap:8px; align-items:center; padding:6px 0 6px 26px; border-bottom:1px dotted rgba(201,162,39,.15); color:#CBB68D; font-size:12.5px; }
+  .les .lm { font-size:11px; color:#6f6248; margin-left:auto; }
+  table.t { width:100%; border-collapse:collapse; font-size:13px; }
+  .t th { text-align:left; color:var(--gold); font-size:11px; letter-spacing:.12em; text-transform:uppercase; padding:8px 10px; border-bottom:2px solid rgba(201,162,39,.4); }
+  .t td { padding:9px 10px; border-bottom:1px solid rgba(201,162,39,.14); color:#E8DCBF; }
+  .post { border:1px solid rgba(201,162,39,.22); border-radius:8px; padding:12px 14px; margin-bottom:10px; }
+  .post .pa { font-family:Palatino,Georgia,serif; font-size:14.5px; color:#FFD870; } .post .pb { font-size:13px; color:#E8DCBF; line-height:1.5; margin:6px 0 8px; }
+  .post .ps { font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--terra); }
+  .jhero { display:flex; flex-wrap:wrap; align-items:baseline; gap:12px; margin-bottom:20px; padding-bottom:14px; border-bottom:3px double rgba(201,162,39,.4); }
+  .jname { font-family:Palatino,Georgia,serif; font-size:28px; }
+  .jcards { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:14px; margin-bottom:20px; }
+  .jcard { border:1px solid rgba(201,162,39,.28); border-radius:12px; padding:16px; background:linear-gradient(165deg,rgba(192,83,47,.10),rgba(201,162,39,.04)); }
+  .jtop { display:flex; gap:14px; align-items:center; }
+  .ring { position:relative; width:64px; height:64px; flex-shrink:0; }
+  .ring svg { transform:rotate(-90deg); }
+  .ring .rp { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:Palatino,Georgia,serif; font-size:15px; color:#FFD870; }
+  .jct { font-family:Palatino,Georgia,serif; font-size:16px; line-height:1.25; } .jcl { font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--terra); margin-top:3px; }
+  .jnext { margin-top:12px; padding:9px 11px; border-left:3px solid var(--gold); background:rgba(201,162,39,.08); border-radius:0 6px 6px 0; font-size:12.5px; color:#E8DCBF; line-height:1.4; }
+  .jnext em { font-style:normal; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:#FFD870; display:block; margin-bottom:2px; }
+  .jd { color:#8fce9e; }
+  .mrow { display:flex; align-items:center; gap:12px; padding:9px 0; border-bottom:1px dashed rgba(201,162,39,.18); }
+  .mname { width:180px; flex-shrink:0; font-size:13px; } .mnote { font-size:11px; color:var(--mut); font-style:italic; margin-top:2px; }
+  .mtrack { flex:1; height:8px; border-radius:4px; background:rgba(201,162,39,.14); overflow:hidden; }
+  .mfill { height:100%; border-radius:4px; background:linear-gradient(90deg,var(--terra),#FFD870); }
+  .mlvl { width:96px; flex-shrink:0; text-align:right; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--gold); }
+  .btn { background:transparent; border:1px solid rgba(201,162,39,.5); color:#FFD870; border-radius:6px; padding:6px 12px; font-size:12px; letter-spacing:.06em; cursor:pointer; font-family:inherit; }
+  .btn:hover { background:rgba(201,162,39,.16); }
+  .btn-go { background:linear-gradient(90deg,var(--terra),var(--gold)); color:#161009; border:none; font-weight:600; }
+  .overlay { position:fixed; inset:0; background:rgba(12,8,4,.82); display:flex; align-items:center; justify-content:center; z-index:60; padding:18px; }
+  .sum { background:#F6EFDA; color:#352A17; width:470px; max-width:100%; max-height:88vh; overflow:auto; border-radius:14px; padding:24px; border:1px solid rgba(201,162,39,.6); box-shadow:0 18px 60px rgba(0,0,0,.55); }
+  .sum .ban { display:flex; align-items:center; gap:12px; padding-bottom:14px; border-bottom:3px double rgba(160,124,30,.55); margin-bottom:14px; }
+  .sum .ban b { font-family:Palatino,Georgia,serif; font-size:19px; color:#6d5714; }
+  .sum .ban i { font-style:normal; font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:#9c7e3c; display:block; margin-top:2px; }
+  .sum .who { font-family:Palatino,Georgia,serif; font-size:24px; margin-bottom:12px; }
+  .sum .who span { display:block; font-size:12px; color:#8a6f34; margin-top:3px; }
+  .sstat { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:14px; }
+  .sstat div { text-align:center; border:1px solid rgba(160,124,30,.4); border-radius:10px; padding:9px 6px; background:rgba(201,162,39,.08); }
+  .sstat b { display:block; font-family:Palatino,Georgia,serif; font-size:21px; color:#a35c17; }
+  .sstat span { font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:#9c7e3c; }
+  .ssec .st { font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:#a35c17; margin:10px 0 6px; display:block; font-weight:600; }
+  .sline { font-size:13px; color:#442f10; padding:4px 0 4px 12px; border-left:3px solid rgba(163,92,23,.5); margin:5px 0; }
+  .sline em { display:block; font-style:normal; font-size:11px; color:#9c7e3c; margin-top:1px; }
+  .sfoot { text-align:center; font-size:11px; color:#9c7e3c; font-style:italic; margin-top:14px; padding-top:12px; border-top:1px dashed rgba(160,124,30,.45); }
+  .sact { display:flex; gap:8px; justify-content:center; margin-top:12px; }
+  .bdark { border-color:rgba(60,45,20,.5); color:#442f10; }
+  .bprev { border-radius:10px; padding:26px; margin-bottom:18px; border:1px solid rgba(201,162,39,.35); }
+  .bprev .bt { font-family:Palatino,Georgia,serif; font-size:26px; }
+  .bprev .bd { font-size:12px; letter-spacing:.2em; text-transform:uppercase; margin-top:4px; opacity:.85; }
+  .note { position:fixed; bottom:18px; right:22px; background:#241808; border:1px solid var(--gold); color:#FFD870; padding:11px 18px; border-radius:8px; font-size:13px; box-shadow:0 6px 24px rgba(0,0,0,.5); z-index:80; }
+  .demobar { background:linear-gradient(90deg,#C0532F,#C9A227); color:#161009; font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; font-weight:600; text-align:center; padding:6px; }
+  @media (max-width:900px){ .stats{grid-template-columns:repeat(2,1fr);} .cols{grid-template-columns:1fr;} .side{width:170px;} }
+  @media print { body * { visibility:hidden; } .sum, .sum * { visibility:visible; } .sum { position:absolute; left:0; top:0; width:100%; box-shadow:none; } .sact{ display:none; } }
+</style>
+</head>
+<body>
+<div class="demobar">Demo build · sample data · review &amp; testing only</div>
+<div class="wrap">
+  <aside class="side">
+    <div class="vmark"><b>AVOD</b><div>African Village of Discovery</div></div>
+    <select class="tenant" id="tenantSel"></select>
+    <nav id="nav"></nav>
+  </aside>
+  <main class="main" id="app"></main>
+</div>
+<div id="modal"></div>
+<div class="note" id="note" style="display:none"></div>
+<script>
+const DATA = {
+cls_kp: { name:"Kingdom Preparatory", emoji:"\u{1F451}", primary:"#C9A227", secondary:"#1B3A2E", domain:"kingdomprep.org",
+  courses:[
+    {id:"africiv", title:"African Civilizations & Geography", label:"History & Civilizations", status:"published", desc:"Trace the great kingdoms, trade routes, and landscapes of Africa — from Kush and Aksum to Mali, Great Zimbabwe, and Kongo.", modules:[
+      {t:"Land & Rivers: The Geography of a Continent", o:"Read physical maps and explain how geography shapes civilization.", ls:[["Rivers of Life: The Nile, Niger & Congo","video",25],["Map Lab: Deserts, Savannahs & Rainforests","project",40],["Check Your Compass","quiz",15]]},
+      {t:"Kingdoms of Gold: Kush, Aksum & Mali", o:"Trace the rise and fall of three great kingdoms and their trade networks.", ls:[["Kush & Aksum: Iron, Ivory & Faith","video",30],["Mansa Musa & the Empire of Gold","video",28],["Reading: The Weeping Camel of Timbuktu","pdf",20]]},
+      {t:"Trade Routes & the Swahili Coast", o:"Analyze how ocean trade connected Africa to the wider world.", ls:[["The Swahili Coast & the Indian Ocean World","video",26],["Big Think: Who Owns the Trade Routes?","project",35]]}]},
+    {id:"kingdomsci", title:"Kingdom Science: Ecology of the Savannah", label:"Science & Innovation", status:"published", desc:"Systems thinking through African ecosystems: food webs, water cycles, migration, and stewardship of the land.", modules:[
+      {t:"The Web of Life", o:"Model food webs and energy flow in the savannah.", ls:[["Producers, Predators & Decomposers","video",22],["Build-a-Biome: The Serengeti Food Web","project",45],["Quiz: Energy Flow","quiz",10]]},
+      {t:"Water, Migration & Stewardship", o:"Explain how water drives migration and settlement.", ls:[["Following the Rains: The Great Migration","video",25],["Design Project: A Water-Wise Village","project",50]]}]},
+    {id:"story", title:"Storytelling & the Oral Tradition", label:"Storytelling & Identity", status:"draft", desc:"Griots, praise poetry, proverbs, and personal narrative. Learners build their own oral-history portfolio.", modules:[]}],
+  learners:[
+    {id:"tamika", name:"Tamika Johnson", grade:7, status:"active", enroll:["africiv","kingdomsci"], done:{"africiv":[["Rivers of Life: The Nile, Niger & Congo","2026-09-02",null],["Map Lab: Deserts, Savannahs & Rainforests","2026-09-04",92],["Check Your Compass","2026-09-05",80]], "kingdomsci":[["Producers, Predators & Decomposers","2026-09-06",null]]}, doing:{"africiv":["Kush & Aksum: Iron, Ivory & Faith"]},
+      mastery:[["Storytelling & Identity",4,"Praise poem performed at family night; confident and original."],["History & Civilizations",3,"Strong Arab-in-the-age essay connected trade routes to modern cities."],["Science & Innovation",3,"Biome web model showed systems thinking beyond the lesson."],["Arts & Expression",2,"Developing shade and form in portfolio drawings."],["Nature & Environment",2,"Joined the garden club; first planting log started."]]},
+    {id:"kwame", name:"Kwame Boateng", grade:8, status:"active", enroll:["africiv","kingdomsci"], done:{"africiv":[["Rivers of Life: The Nile, Niger & Congo","2026-09-03",null]]}, doing:{"africiv":["Map Lab: Deserts, Savannahs & Rainforests"],"kingdomsci":[]},
+      mastery:[["Nature & Environment",3,"Herb garden journal is meticulous; connected mint invasion to succession."],["Science & Innovation",2,"Food web model needs clearer energy-flow arrows."],["History & Civilizations",2,"Solid recall on Kush/Aksum quiz; working on cause-and-effect."]]},
+    {id:"zola", name:"Zola Ndiaye", grade:6, status:"active", enroll:["africiv"], done:{"africiv":[["Rivers of Life: The Nile, Niger & Congo","2026-09-05",null]]}, doing:{},
+      mastery:[["Storytelling & Identity",3,"Griot circle participation rising; very expressive reading voice."],["Arts & Expression",3,"Color and pattern work in map art showed real design instinct."],["Nature & Environment",2,"Asked wonderful questions during the Great Migration lesson."]]},
+    {id:"amara", name:"Amara Okonkwo", grade:9, status:"active", enroll:["africiv","kingdomsci"], done:{"africiv":[["Rivers of Life: The Nile, Niger & Congo","2026-09-03",null],["Map Lab: Deserts, Savannahs & Rainforests","2026-09-06",88],["Check Your Compass","2026-09-07",95]]}, doing:{},
+      mastery:[["History & Civilizations",4,"Led the Swahili Coast market debate; cited sources unprompted."],["Science & Innovation",3,"Testing water-filter prototype for the Water-Wise Village project."],["Civic & Social Leadership",3,"Organized the pod study schedule and keeps it running."],["Financial & Economic Literacy",2,"First budget map done; exploring compound growth next."]]},
+    {id:"jabari", name:"Jabari Mensah", grade:7, status:"active", enroll:["africiv"], done:{}, doing:{},
+      mastery:[["Sports & Movement",3,"Track drills consistency improving week over week."],["Health & Wellness",2,"Sleep routine chart started with his family."],["History & Civilizations",2,"Enthusiastic beginning on the rivers unit."]]},
+    {id:"nia", name:"Nia Carter", grade:5, status:"inactive", enroll:[], done:{}, doing:{}, mastery:[]}],
+  posts:[
+    {sp:"Showcase Gallery", a:"Tamika J.", b:"My biome portrait from Map Lab — the savannah has eleven species hiding in it! Can you find the secretary bird?", w:"2026-09-05 15:20", st:"published"},
+    {sp:"Journey Stories", a:"Ms. Adaeze", b:"Week 2 reflections: the class loved trading cocoa and cloves in our Swahili Coast market simulation.", w:"2026-09-07 09:10", st:"published"},
+    {sp:"Garden Chat", a:"Kwame B.", b:"Started my window herb garden for the stewardship badge. Basil is winning; mint is already chaos.", w:"2026-09-08 18:45", st:"published"},
+    {sp:"Garden Chat", a:"Guest42", b:"Check out this site for free answers to all quizzes!!", w:"2026-09-08 20:02", st:"flagged"}],
+  grades:[["Tamika Johnson","African Civilizations & Geography","Map Lab: Biomes Portrait",100,92,"graded"],["Tamika Johnson","African Civilizations & Geography","Check Your Compass Quiz",20,16,"graded"],["Amara Okonkwo","African Civilizations & Geography","Map Lab: Biomes Portrait",100,88,"graded"],["Amara Okonkwo","African Civilizations & Geography","Check Your Compass Quiz",20,19,"graded"],["Kwame Boateng","African Civilizations & Geography","Map Lab: Biomes Portrait",100,null,"ungraded"]],
+  audit:[["2026-08-28 10:00","admin@kingdomprep.org","course.published","course crs_africiv"],["2026-09-04 11:22","admin@kingdomprep.org","learner.enrolled","enrollment enr_5"],["2026-09-08 20:05","moderator@kingdomprep.org","post.flagged","community_post cp_4"],["2026-09-01 19:33","admin@kingdomprep.org","ai.course_drafted","ai_job ai_1"]]},
+cls_ula: { name:"Ubuntu Leadership Academy", emoji:"\u{1F30D}", primary:"#C0532F", secondary:"#22303F", domain:"ubuntu.avodlearning.org",
+  courses:[{id:"wealth", title:"Money, Markets & Community Wealth", label:"Financial & Economic Literacy", status:"published", desc:"Earning, saving, entrepreneurship, and how communities build and keep wealth together.", modules:[
+    {t:"Earn & Keep: Foundations of Money", o:"Distinguish needs from wants and build a first savings plan.", ls:[["Barter to Bank: A Brief History of Money","video",20],["My First Savings Map","project",30]]}]}],
+  learners:[
+    {id:"dayo", name:"Dayo Adeyemi", grade:8, status:"active", enroll:["wealth"], done:{"wealth":[["Barter to Bank: A Brief History of Money","2026-09-02",null],["My First Savings Map","2026-09-06",91]]}, doing:{},
+      mastery:[["Financial & Economic Literacy",3,"Savings-map pitch earned community seed funding."],["Civic & Social Leadership",3,"Co-facilitated the pod circle on community wealth."]]},
+    {id:"eshe", name:"Eshe Kamau", grade:7, status:"active", enroll:["wealth"], done:{"wealth":[["Barter to Bank: A Brief History of Money","2026-09-04",null]]}, doing:{}, mastery:[]},
+    {id:"seko", name:"Seko Diallo", grade:9, status:"active", enroll:["wealth"], done:{}, doing:{"wealth":["Barter to Bank: A Brief History of Money"]}, mastery:[]}],
+  posts:[{sp:"Showcase Gallery", a:"Dayo A.", b:"Pitch day recap: our savings-map project got seed funding from two families in our pod.", w:"2026-09-06 14:00", st:"published"}],
+  grades:[["Dayo Adeyemi","Money, Markets & Community Wealth","My First Savings Map",100,91,"graded"],["Eshe Kamau","Money, Markets & Community Wealth","My First Savings Map",100,null,"ungraded"]],
+  audit:[["2026-08-25 12:00","admin@ubuntu.avodlearning.org","course.published","course crs_wealth"]]}
+};
+const NAVS = [["dash","Village Square","◈"],["journey","My Journey","◉"],["studio","Course Studio","✦"],["learners","Learners","❖"],["gradebook","Gradebook","✎"],["voice","Village Voice","◍"],["branding","Branding","❑"],["chronicle","Chronicle","☰"]];
+const LEVELS={1:"Seedling",2:"Growing",3:"Flowering",4:"Rooted"};
+let village="cls_kp", view="dash", JL="tamika", selCourse=null;
+const q=new URLSearchParams(location.search); if(q.get("village")&&DATA[q.get("village")]) village=q.get("village"); if(q.get("journey")) { JL=q.get("journey"); view="journey"; }
+if(!DATA[village].learners.find(l=>l.id===JL)) JL=DATA[village].learners.find(l=>l.status==="active").id;
+const cls=()=>DATA[village];
+function lessonsList(c,learn){ let out=[]; (c.modules||[]).forEach(m=>m.ls.forEach(l=>out.push({m:m.t,t:l[0],ty:l[1],min:l[2]}))); if(learn){(learn.done[c.id]||[]).forEach(d=>{let o=out.find(o=>o.t===d[0]); if(o)o.done=d;});((learn.doing[c.id])||[]).forEach(t=>{let o=out.find(x=>x.t===t); if(o)o.doing=true;});} return out;}
+function syncUrl(){ const u=new URL(location.href); u.searchParams.set("village",village); if(view==="journey"&&JL)u.searchParams.set("journey",JL); else u.searchParams.delete("journey"); history.replaceState(null,"",u); }
+function note(m){ const n=document.getElementById("note"); n.textContent=m; n.style.display="block"; setTimeout(()=>n.style.display="none",3200); }
+function renderNav(){ document.getElementById("nav").innerHTML=NAVS.map(n=>'<button class="'+(view===n[0]?'on':'')+'" onclick="go(\''+n[0]+'\')"><span>'+n[2]+'</span> '+n[1]+'</button>').join(""); document.getElementById("tenantSel").innerHTML=Object.keys(DATA).map(k=>'<option value="'+k+'" '+(k===village?"selected":"")+'>'+DATA[k].emoji+' '+DATA[k].name+'</option>').join(""); }
+function go(v){ view=v; if(v!=="studio")selCourse=null; syncUrl(); renderNav(); render(); }
+function switchVillage(v){ village=v; JL=DATA[v].learners.find(l=>l.status==="active").id; selCourse=null; syncUrl(); renderNav(); render(); }
+function setJL(id){ JL=id; syncUrl(); render(); }
+function pick(c){ selCourse=selCourse===c?null:c; render(); }
+function badge(st){ return '<span class="badge '+(st==="flagged"?"b-flag":st==="published"||st==="active"||st==="graded"?"b-pub":"b-draft")+'">'+st+'</span>'; }
+function render(){ const c=cls(); const el=document.getElementById("app");
+ if(view==="dash"){
+  const act=c.learners.filter(l=>l.status==="active").length, pub=c.courses.filter(x=>x.status==="published").length;
+  const enroll=c.learners.reduce((a,l)=>a+l.enroll.length,0), flagged=c.posts.filter(p=>p.st==="flagged").length, ung=c.grades.filter(g=>!g[4]).length;
+  let prow=""; c.courses.filter(x=>x.status==="published").forEach(x=>{ let tot=0,done=0,en=0; c.learners.forEach(l=>{ if(l.enroll.includes(x.id)){en++; let ll=lessonsList(x,l); tot+=ll.length; done+=ll.filter(o=>o.done).length; } }); const p=tot?Math.round(done/tot*100):0;
+    prow+='<div class="prow"><div class="pct">'+p+'%</div><div class="pt">'+x.title+'</div><div class="ps">'+en+' learners · '+lessonsList(x).length+' lessons '+badge(x.status)+'</div><div class="bar"><i style="width:'+p+'%"></i></div></div>'; });
+  el.innerHTML='<div class="hero"><div><div class="kick">African Village of Discovery</div><h1>'+c.name+' '+c.emoji+'</h1><div class="hsub">'+c.domain+' · Every child belongs to the village.</div></div><div class="edge">◆ ❖ ◆ ❖ ◆ ❖ ◆ ❖ ◆</div></div>'
+  +'<div class="stats">'
+  +'<div class="stat"><div class="n">'+act+'</div><div class="l">Active learners</div><div class="s">enrolled in your village</div></div>'
+  +'<div class="stat"><div class="n">'+pub+'</div><div class="l">Published courses</div><div class="s">live in the catalog</div></div>'
+  +'<div class="stat"><div class="n">'+enroll+'</div><div class="l">Active enrollments</div><div class="s">journeys underway</div></div>'
+  +'<div class="stat"><div class="n">'+flagged+'</div><div class="l">Flagged posts</div><div class="s">awaiting moderation</div></div>'
+  +'<div class="stat"><div class="n">'+ung+'</div><div class="l">Ungraded items</div><div class="s">in the gradebook queue</div></div></div>'
+  +'<div class="cols"><div class="panel"><div class="ptitle">Course completion across the village</div>'+(prow||'<div class="hsub">No courses yet.</div>')+'</div>'
+  +'<div class="panel"><div class="ptitle">Latest chronicle entries</div>'
+  +(c.audit.map(a=>'<div class="au"><div class="a">'+a[2]+'</div><div class="m">'+a[1]+' · '+a[3]+'</div><div class="w">'+a[0]+'</div></div>').join("")||'<div class="hsub">The chronicle is empty.</div>')+'</div></div>';
+ } else if(view==="journey"){
+  const l=c.learners.find(x=>x.id===JL)||c.learners.filter(x=>x.status==="active")[0];
+  let cards=""; l.enroll.forEach(cid=>{ const co=c.courses.find(x=>x.id===cid); const ll=lessonsList(co,l); const d=ll.filter(o=>o.done).length; const p=Math.round(d/ll.length*100); const nx=ll.find(o=>!o.done);
+   cards+='<div class="jcard"><div class="jtop"><div class="ring"><svg width="64" height="64"><circle cx="32" cy="32" r="26" fill="none" stroke="rgba(201,162,39,.15)" stroke-width="6"/><circle cx="32" cy="32" r="26" fill="none" stroke="url(#rg'+cid+')" stroke-width="6" stroke-linecap="round" stroke-dasharray="163.4" stroke-dashoffset="'+(163.4*(1-p/100)).toFixed(1)+'"/><defs><linearGradient id="rg'+cid+'"><stop offset="0%" stop-color="#C0532F"/><stop offset="100%" stop-color="#FFD870"/></linearGradient></defs></svg><div class="rp">'+p+'%</div></div>'
+   +'<div><div class="jct">'+co.title+'</div><div class="jcl">'+co.label+'</div></div></div>'
+   +(nx?'<div class="jnext"><em>Up next</em>'+nx.m+' — '+nx.t+' <span style="color:#6f6248">('+nx.ty+' · '+nx.min+' min)</span></div>':'<div class="jnext jd"><em>Complete</em>Every lesson in this journey is finished. Well walked.</div>')+'</div>'; });
+  let opts=""; c.learners.filter(x=>x.status==="active").forEach(x=>{ opts+='<option value="'+x.id+'" '+(x.id===l.id?"selected":"")+'>'+x.name+' (G'+x.grade+')</option>'; });
+  el.innerHTML='<div class="jhero"><div class="jname">The Journey of '+l.name.split(" ")[0]+'</div><div class="hsub">Grade '+l.grade+' · '+c.name+' — read-only window for learners &amp; parents.</div>'
+   +'<select class="tenant" style="max-width:240px;margin:0 0 0 auto" onchange="setJL(this.value)">'+opts+'</select>'
+   +'<button class="btn" onclick="copyLink(\''+l.id+'\')">Copy parent link</button>'
+   +'<button class="btn btn-go" onclick="openSum(\''+l.id+'\')">Weekly summary card</button></div>'
+   +'<div class="jcards">'+(cards||'<div class="panel hsub">No journeys underway yet.</div>')+'</div>'
+   +'<div class="cols"><div class="panel"><div class="ptitle">Mastery by village label</div>'
+   +(l.mastery.length?l.mastery.map(m=>'<div class="mrow"><div class="mname">'+m[0]+(m[2]?'<div class="mnote">'+m[2]+'</div>':"")+'</div><div class="mtrack"><div class="mfill" style="width:'+(m[1]/4*100)+'%"></div></div><div class="mlvl">'+LEVELS[m[1]]+'</div></div>').join(""):'<div class="hsub">Mastery blooms as journeys are walked.</div>')
+   +'</div><div class="panel"><div class="ptitle">From the Showcase Gallery</div>'
+   +(c.posts.filter(p=>p.sp==="Showcase Gallery"&&p.st==="published").map(p=>'<div class="post"><div><span class="pa">'+p.a+'</span> <span style="color:#6f6248;font-size:11px">· '+p.w.slice(0,10)+'</span></div><div class="pb" style="margin-bottom:0">'+p.b+'</div></div>').join("")||'<div class="hsub">No showcase pieces yet.</div>')
+   +'</div></div>';
+ } else if(view==="studio"){
+  let cat=""; c.courses.forEach(x=>{ cat+='<div class="course '+(selCourse===x.id?'on':'')+'" onclick="pick(\''+x.id+'\')"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><div class="ct">'+x.title+'</div>'+badge(x.status)+'</div><div class="cm">'+x.label+' · '+x.modules.length+' modules · '+lessonsList(x).length+' lessons</div><div class="cd">'+x.desc+'</div></div>'; });
+  let tree='<div class="hsub">Select a course on the left to view its structure.</div>';
+  if(selCourse){ const x=c.courses.find(v=>v.id===selCourse); if(x.modules.length){ tree=x.modules.map((m,i)=>'<div class="mod"><div class="mt"><b style="color:#C0532F;font-family:Palatino,Georgia,serif">'+(i+1)+'</b> '+m.t+'</div><div class="mo">'+m.o+'</div>'+m.ls.map(l=>'<div class="les">▸ '+l[0]+'<span class="lm">'+l[1]+' · '+l[2]+' min</span></div>').join("")+'</div>').join(""); } else tree='<div class="hsub">Draft compiled by the Curriculum Engine — modules await educator review.</div>'; }
+  el.innerHTML='<div class="vhead"><h2>Course Studio</h2><div class="vsub">Courses as modules and lessons. Read-only in this demo.</div></div>'
+  +'<div class="cols" style="grid-template-columns:1fr 1.15fr"><div class="panel"><div class="ptitle">Course catalog</div>'+cat+'</div><div class="panel"><div class="ptitle">Curriculum structure</div>'+tree+'</div></div>';
+ } else if(view==="learners"){
+  el.innerHTML='<div class="vhead"><h2>Learners</h2><div class="vsub">Your village roster.</div></div><div class="panel"><table class="t"><tr><th>Learner</th><th>Grade</th><th>Enrollments</th><th>Status</th></tr>'
+   +c.learners.map(l=>'<tr><td>'+l.name+'</td><td>'+l.grade+'</td><td>'+l.enroll.length+'</td><td>'+badge(l.status)+'</td></tr>').join("")+'</table></div>';
+ } else if(view==="gradebook"){
+  el.innerHTML='<div class="vhead"><h2>Gradebook</h2><div class="vsub">Percent means points earned out of points possible.</div></div><div class="panel"><table class="t"><tr><th>Learner</th><th>Course</th><th>Item</th><th>Possible</th><th>Earned</th><th>Status</th></tr>'
+   +c.grades.map(g=>'<tr><td>'+g[0]+'</td><td>'+g[1]+'</td><td>'+g[2]+'</td><td>'+g[3]+'</td><td>'+(g[4]!=null?g[4]+" ("+Math.round(g[4]/g[3]*100)+"%)":"—")+'</td><td>'+badge(g[5])+'</td></tr>').join("")+'</table></div>';
+ } else if(view==="voice"){
+  el.innerHTML='<div class="vhead"><h2>Village Voice</h2><div class="vsub">Showcases, journey stories, and garden chat. Moderation is interactive in the full app.</div></div><div class="panel">'
+   +c.posts.map(p=>'<div class="post"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><div><span class="pa">'+p.a+'</span> <span style="color:#6f6248;font-size:11px">· '+p.w+'</span></div>'+badge(p.st)+'</div><div class="pb">'+p.b+'</div><div class="ps">'+p.sp+'</div></div>').join("")+'</div>';
+ } else if(view==="branding"){
+  el.innerHTML='<div class="vhead"><h2>Branding</h2><div class="vsub">Each classroom identity travels with its learners everywhere in AVOD.</div></div>'
+   +'<div class="bprev" style="background:linear-gradient(140deg,'+c.secondary+' 0%,'+c.secondary+'cc 60%,'+c.primary+'33 100%)"><div class="bt" style="color:'+c.primary+'">'+c.emoji+' '+c.name+'</div><div class="bd" style="color:'+c.primary+'">'+c.domain+'</div></div>'
+   +'<div class="panel"><div class="ptitle">Identity</div><table class="t"><tr><th>Name</th><th>Domain</th><th>Mark</th><th>Primary</th><th>Secondary</th></tr><tr><td>'+c.name+'</td><td>'+c.domain+'</td><td style="font-size:18px">'+c.emoji+'</td><td style="color:'+c.primary+'">'+c.primary+'</td><td>'+c.secondary+'</td></tr></table></div>';
+ } else if(view==="chronicle"){
+  el.innerHTML='<div class="vhead"><h2>The Chronicle</h2><div class="vsub">Every meaningful act in this classroom, written down.</div></div><div class="panel"><table class="t"><tr><th>When</th><th>Actor</th><th>Action</th><th>Entity</th></tr>'
+   +c.audit.map(a=>'<tr><td>'+a[0]+'</td><td>'+a[1]+'</td><td>'+a[2]+'</td><td>'+a[3]+'</td></tr>').join("")+'</table></div>';
+ }}
+function copyLink(id){ const u=new URL(location.href); u.searchParams.set("village",village); u.searchParams.set("journey",id); if(navigator.clipboard){navigator.clipboard.writeText(u.toString()).then(()=>note("Journey link copied — paste it to the family.")).catch(()=>prompt("Copy this journey link:",u));} else prompt("Copy this journey link:",u); }
+function openSum(id){ const c=cls(); const l=c.learners.find(x=>x.id===id);
+ let walked=[],nexts=[],tot=0,done=0;
+ l.enroll.forEach(cid=>{ const co=c.courses.find(x=>x.id===cid); const ll=lessonsList(co,l); done+=ll.filter(o=>o.done).length; tot+=ll.length; ll.filter(o=>o.done).forEach(o=>walked.push([o.t,co.title,o.done[2]])); const nx=ll.find(o=>!o.done); if(nx)nexts.push([nx.t,co.title,nx.ty,nx.min]); });
+ const pct=tot?Math.round(done/tot*100):0; const mast=l.mastery.slice().sort((a,b)=>b[1]-a[1]).slice(0,4);
+ let h='<div class="overlay" onclick="if(event.target===this)closeSum()"><div class="sum">'
+  +'<div class="ban"><span style="font-size:26px">'+c.emoji+'</span><div><b>'+c.name+'</b><i>African Village of Discovery · Weekly Journey Summary</i></div></div>'
+  +'<div class="who">'+l.name+'<span>Grade '+l.grade+' · Sep 2 – Sep 8</span></div>'
+  +'<div class="sstat"><div><b>'+walked.length+'</b><span>steps this week</span></div><div><b>'+l.enroll.length+'</b><span>journeys underway</span></div><div><b>'+pct+'%</b><span>overall progress</span></div></div>';
+ if(walked.length) h+='<div class="ssec"><span class="st">✦ Walked this week</span>'+walked.slice(0,5).map(w=>'<div class="sline">'+w[0]+'<em>'+w[1]+(w[2]!=null?" · "+w[2]+"%":"")+'</em></div>').join("")+'</div>';
+ if(nexts.length) h+='<div class="ssec"><span class="st">◈ Up next</span>'+nexts.slice(0,3).map(n=>'<div class="sline">'+n[0]+'<em>'+n[1]+' · '+n[2]+' · '+n[3]+' min</em></div>').join("")+'</div>';
+ if(mast.length) h+='<div class="ssec"><span class="st">❖ Growing mastery</span>'+mast.map(m=>'<div class="sline">'+m[0]+'<em>'+LEVELS[m[1]]+'</em></div>').join("")+'</div>';
+ h+='<div class="sfoot">'+c.domain+' · shared with love by the village</div>'
+  +'<div class="sact"><button class="btn btn-go" onclick="window.print()">Print / save</button><button class="btn bdark" onclick="closeSum()">Close</button></div></div></div>';
+ document.getElementById("modal").innerHTML=h; }
+function closeSum(){ document.getElementById("modal").innerHTML=""; }
+document.getElementById("tenantSel").addEventListener("change",e=>switchVillage(e.target.value));
+renderNav(); render();
+</script>
+</body>
+</html>
