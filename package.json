@@ -10,7 +10,9 @@
     "dev": "npm run dev -w @avod/web",
     "build": "npm run build -w @avod/web",
     "lint": "npm run lint -w @avod/web",
-    "typecheck": "npm run typecheck -w @avod/web"
+    "typecheck": "npm run typecheck -w @avod/web",
+    "db:apply": "./scripts/apply-supabase.sh",
+    "db:push": "./scripts/supabase-cli-push.sh"
   },
   "engines": {
     "node": ">=20"
