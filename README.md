@@ -20,25 +20,34 @@ Without Supabase env vars the UI runs on Kingdom Preparatory **demo seed** data.
 
 ## Supabase
 
-1. Create a Supabase project.
-2. Apply migrations in order:
+1. Create a Supabase project (or use an existing one).
+2. Copy connection values into `apps/web/.env.local`:
+
+```
+NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+SUPABASE_SERVICE_ROLE_KEY=...   # server only
+SUPABASE_DB_URL=postgresql://postgres.[ref]:[password]@...:5432/postgres
+```
+
+3. Apply the schema:
 
 ```bash
-supabase db push
-# or run SQL files in supabase/migrations via the SQL editor
+export SUPABASE_DB_URL='postgresql://...'
+./scripts/apply-supabase.sh
 ```
 
-3. Copy `apps/web/.env.example` → `apps/web/.env.local` and set:
+Or with the CLI (`SUPABASE_ACCESS_TOKEN` + `SUPABASE_PROJECT_REF`):
 
+```bash
+./scripts/supabase-cli-push.sh
 ```
-NEXT_PUBLIC_SUPABASE_URL=...
-NEXT_PUBLIC_SUPABASE_ANON_KEY=...
-```
 
-4. Create auth users matching seed UUIDs (or adapt the seed), then:
+4. After creating matching auth users (or adapting seed UUIDs):
 
-```sql
-select public.seed_kingdom_preparatory();
+```bash
+RUN_SEED=1 ./scripts/apply-supabase.sh
+# or: select public.seed_kingdom_preparatory();
 ```
 
 Schema covers organizations, classrooms, themes, courses, modules, lessons, AI jobs/artifacts, resources, assignments, quizzes, gradebook, progress, calendar, community, moderation, notifications, files, and audit logs — with RLS policies for tenant isolation.
