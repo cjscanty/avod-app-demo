@@ -99,6 +99,46 @@
   .demobar { background:linear-gradient(90deg,#C0532F,#C9A227); color:#161009; font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; font-weight:600; text-align:center; padding:6px; }
   @media (max-width:900px){ .stats{grid-template-columns:repeat(2,1fr);} .cols{grid-template-columns:1fr;} .side{width:170px;} }
   @media print { body * { visibility:hidden; } .sum, .sum * { visibility:visible; } .sum { position:absolute; left:0; top:0; width:100%; box-shadow:none; } .sact{ display:none; } }
+
+.tabs { display:none; }
+.side nav button em { font-style:normal; }
+@media (max-width: 900px) {
+  .wrap { flex-direction: column; }
+  .side { width: 100%; height: auto; position: static; display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-right: none; border-bottom: 1px solid rgba(201,162,39,.22); }
+  .vmark { margin: 0; padding: 0; border: none; }
+  .vmark div { display: none; }
+  .vmark b { font-size: 15px; letter-spacing: .2em; }
+  .tenant { margin: 0 0 0 auto; max-width: 200px; font-size: 12px; padding: 6px 8px; }
+  .side > nav { display: none; }
+  .tabs { display: flex; position: fixed; left: 0; right: 0; bottom: 0; background: #241a0c; border-top: 1px solid rgba(201,162,39,.3); overflow-x: auto; z-index: 40; padding: 4px 4px 10px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tabs button { flex: 1 0 auto; display: flex; flex-direction: column; align-items: center; gap: 2px; background: none; border: none; color: #CBB68D; padding: 7px 12px 6px; border-radius: 8px; border-top: 3px solid transparent; font-family: inherit; white-space: nowrap; }
+  .tabs button span { font-size: 16px; line-height: 1; }
+  .tabs button em { font-style: normal; font-size: 9.5px; letter-spacing: .04em; }
+  .tabs button.on { color: #FFD870; border-top-color: #C9A227; background: rgba(201,162,39,.12); }
+  .main { padding: 16px 14px 96px; max-width: none; }
+  .hero { flex-direction: column; align-items: flex-start; gap: 8px; padding: 2px 0 14px; margin-bottom: 16px; }
+  .edge { display: none; }
+  h1 { font-size: 25px; }
+  h2 { font-size: 21px; }
+  .stats { grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 16px; }
+  .stat { padding: 10px; }
+  .stat .n { font-size: 22px; }
+  .cols { grid-template-columns: 1fr; gap: 12px; }
+  .panel { padding: 13px; }
+  .jhero { flex-direction: column; align-items: stretch; gap: 8px; }
+  .jhero .tenant { max-width: none; width: 100%; }
+  .jhero .btn { width: 100%; }
+  .jname { font-size: 22px; }
+  .jcards { grid-template-columns: 1fr; gap: 10px; }
+  .mrow { flex-wrap: wrap; gap: 6px; }
+  .mname { width: 100%; }
+  .mlvl { width: auto; text-align: left; }
+  .t th, .t td { padding: 7px 6px; font-size: 12px; }
+  .les { padding-left: 12px; }
+  .sum { width: 100%; padding: 18px; border-radius: 12px; }
+  .note { left: 14px; right: 14px; bottom: 92px; }
+}
 </style>
 </head>
 <body>
@@ -112,6 +152,7 @@
   <main class="main" id="app"></main>
 </div>
 <div id="modal"></div>
+<nav class="tabs" id="tabs"></nav>
 <div class="note" id="note" style="display:none"></div>
 <script>
 const DATA = {
@@ -165,7 +206,12 @@ const cls=()=>DATA[village];
 function lessonsList(c,learn){ let out=[]; (c.modules||[]).forEach(m=>m.ls.forEach(l=>out.push({m:m.t,t:l[0],ty:l[1],min:l[2]}))); if(learn){(learn.done[c.id]||[]).forEach(d=>{let o=out.find(o=>o.t===d[0]); if(o)o.done=d;});((learn.doing[c.id])||[]).forEach(t=>{let o=out.find(x=>x.t===t); if(o)o.doing=true;});} return out;}
 function syncUrl(){ const u=new URL(location.href); u.searchParams.set("village",village); if(view==="journey"&&JL)u.searchParams.set("journey",JL); else u.searchParams.delete("journey"); history.replaceState(null,"",u); }
 function note(m){ const n=document.getElementById("note"); n.textContent=m; n.style.display="block"; setTimeout(()=>n.style.display="none",3200); }
-function renderNav(){ document.getElementById("nav").innerHTML=NAVS.map(n=>'<button class="'+(view===n[0]?'on':'')+'" onclick="go(\''+n[0]+'\')"><span>'+n[2]+'</span> '+n[1]+'</button>').join(""); document.getElementById("tenantSel").innerHTML=Object.keys(DATA).map(k=>'<option value="'+k+'" '+(k===village?"selected":"")+'>'+DATA[k].emoji+' '+DATA[k].name+'</option>').join(""); }
+function renderNav(){
+  const items = NAVS.map(n=>'<button class="'+(view===n[0]?'on':'')+'" onclick="go(\''+n[0]+'\')"><span>'+n[2]+'</span> <em>'+n[1]+'</em></button>').join("");
+  document.getElementById("nav").innerHTML=items;
+  document.getElementById("tabs").innerHTML=items;
+  document.getElementById("tenantSel").innerHTML=Object.keys(DATA).map(k=>'<option value="'+k+'" '+(k===village?"selected":"")+'>'+DATA[k].emoji+' '+DATA[k].name+'</option>').join("");
+}
 function go(v){ view=v; if(v!=="studio")selCourse=null; syncUrl(); renderNav(); render(); }
 function switchVillage(v){ village=v; JL=DATA[v].learners.find(l=>l.status==="active").id; selCourse=null; syncUrl(); renderNav(); render(); }
 function setJL(id){ JL=id; syncUrl(); render(); }
