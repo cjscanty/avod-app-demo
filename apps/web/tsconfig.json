@@ -16,9 +16,9 @@
     "plugins": [{ "name": "next" }],
     "paths": {
       "@/*": ["./src/*"],
-      "@avod/design-tokens": ["../../packages/design-tokens/src/index.ts"],
-      "@avod/schemas": ["../../packages/schemas/src/index.ts"],
-      "@avod/auth": ["../../packages/auth/src/index.ts"]
+      "@avod/design-tokens": ["./src/vendor/design-tokens/index.ts"],
+      "@avod/schemas": ["./src/vendor/schemas/index.ts"],
+      "@avod/auth": ["./src/vendor/auth/index.ts"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
